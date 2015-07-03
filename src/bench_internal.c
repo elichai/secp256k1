@@ -344,7 +344,6 @@ void bench_context_sign(void* arg) {
     }
 }
 
-#ifndef USE_NUM_NONE
 void bench_num_jacobi(void* arg) {
     int i, j = 0;
     bench_inv *data = (bench_inv*)arg;
@@ -359,7 +358,6 @@ void bench_num_jacobi(void* arg) {
     }
     CHECK(j <= 200000);
 }
-#endif
 
 int main(int argc, char **argv) {
     bench_inv data;
@@ -397,8 +395,6 @@ int main(int argc, char **argv) {
     if (have_flag(argc, argv, "context") || have_flag(argc, argv, "verify")) run_benchmark("context_verify", bench_context_verify, bench_setup, NULL, &data, 10, 20);
     if (have_flag(argc, argv, "context") || have_flag(argc, argv, "sign")) run_benchmark("context_sign", bench_context_sign, bench_setup, NULL, &data, 10, 200);
 
-#ifndef USE_NUM_NONE
     if (have_flag(argc, argv, "num") || have_flag(argc, argv, "jacobi")) run_benchmark("num_jacobi", bench_num_jacobi, bench_setup, NULL, &data, 10, 200000);
-#endif
     return 0;
 }

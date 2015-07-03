@@ -689,7 +689,7 @@ void test_num_mod(void) {
     secp256k1_num order, n;
 
     /* check that 0 mod anything is 0 */
-    random_scalar_order_test(&s);
+    random_scalar_order_test(&s); 
     secp256k1_scalar_get_num(&order, &s);
     secp256k1_scalar_set_int(&s, 0);
     secp256k1_scalar_get_num(&n, &s);
@@ -704,7 +704,7 @@ void test_num_mod(void) {
     CHECK(secp256k1_num_is_zero(&n));
 
     /* check that increasing the number past 2^256 does not break this */
-    random_scalar_order_test(&s);
+    random_scalar_order_test(&s); 
     secp256k1_scalar_get_num(&n, &s);
     /* multiply by 2^8, which'll test this case with high probability */
     for (i = 0; i < 8; ++i) {
@@ -737,7 +737,7 @@ void test_num_jacobi(void) {
     /* we first need a scalar which is not a multiple of 5 */
     do {
         secp256k1_num fiven;
-        random_scalar_order_test(&sqr);
+        random_scalar_order_test(&sqr); 
         secp256k1_scalar_get_num(&fiven, &five);
         secp256k1_scalar_get_num(&n, &sqr);
         secp256k1_num_mod(&n, &fiven);
@@ -756,7 +756,7 @@ void test_num_jacobi(void) {
 
     /** test with secp group order as order */
     secp256k1_scalar_order_get_num(&order);
-    random_scalar_order_test(&sqr);
+    random_scalar_order_test(&sqr); 
     secp256k1_scalar_sqr(&sqr, &sqr);
     /* test residue */
     secp256k1_scalar_get_num(&n, &sqr);
@@ -773,37 +773,6 @@ void test_num_jacobi(void) {
     secp256k1_scalar_get_num(&n, &small);
     secp256k1_num_sub(&n, &order, &n);
     CHECK(secp256k1_num_jacobi(&n, &order) == 1);  /* sage confirms this is 1 */
-}
-
-void test_num_mod(void) {
-    int i;
-    secp256k1_scalar s;
-    secp256k1_num order, n;
-
-    /* check that 0 mod anything is 0 */
-    random_scalar_order_test(&s); 
-    secp256k1_scalar_get_num(&order, &s);
-    secp256k1_scalar_set_int(&s, 0);
-    secp256k1_scalar_get_num(&n, &s);
-    secp256k1_num_mod(&n, &order);
-    CHECK(secp256k1_num_is_zero(&n));
-
-    /* check that anything mod 1 is 0 */
-    secp256k1_scalar_set_int(&s, 1);
-    secp256k1_scalar_get_num(&order, &s);
-    secp256k1_scalar_get_num(&n, &s);
-    secp256k1_num_mod(&n, &order);
-    CHECK(secp256k1_num_is_zero(&n));
-
-    /* check that increasing the number past 2^256 does not break this */
-    random_scalar_order_test(&s); 
-    secp256k1_scalar_get_num(&n, &s);
-    /* multiply by 2^8, which'll test this case with high probability */
-    for (i = 0; i < 8; ++i) {
-        secp256k1_num_add(&n, &n, &n);
-    }
-    secp256k1_num_mod(&n, &order);
-    CHECK(secp256k1_num_is_zero(&n));
 }
 
 void run_num_smalltests(void) {
@@ -953,10 +922,8 @@ void scalar_test(void) {
             secp256k1_scalar_inverse(&inv, &inv);
             /* Inverting one must result in one. */
             CHECK(secp256k1_scalar_is_one(&inv));
-#ifndef USE_NUM_NONE
             secp256k1_scalar_get_num(&invnum, &inv);
             CHECK(secp256k1_num_is_one(&invnum));
-#endif
         }
     }
 
