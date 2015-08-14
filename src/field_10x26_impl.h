@@ -8,6 +8,7 @@
 #define SECP256K1_FIELD_REPR_IMPL_H
 
 #include "util.h"
+#include "num_impl.h"
 #include "field.h"
 
 #ifdef VERIFY
