@@ -61,6 +61,16 @@ matrix:
           packages:
             - gcc-multilib
             - libgmp-dev:i386
+    - compiler: gcc-arm-linux-gnueabi
+      arch: arm64
+      addons:
+        apt:
+          packages:
+            - gcc-arm-linux-gnueabi
+      env:
+        - HOST=arm-linux-gnueabi ASM=arm EXPERIMENTAL=yes EXTRAFLAGS="--target=$HOST --build=$HOST"
+        - FIELD=auto BIGNUM=no SCALAR=auto ENDOMORPHISM=yes STATICPRECOMPUTATION=yes ECDH=yes RECOVERY=yes BUILD=check JNI=no
+
 before_install: mkdir -p `dirname $GUAVA_JAR`
 install: if [ ! -f $GUAVA_JAR ]; then wget $GUAVA_URL -O $GUAVA_JAR; fi
 before_script: ./autogen.sh
