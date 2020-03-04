@@ -72,27 +72,32 @@ matrix:
             - libtool-bin
             - libc6-dbg:i386
     - compiler: gcc
+      name: "Valgrind with encodmorphism"
       env:
         - BIGNUM=no  ENDOMORPHISM=yes  ASM=x86_64 EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes
         - VALGRIND=yes EXTRAFLAGS="--disable-openssl-tests CPPFLAGS='-DVALGRIND -DITERS=1'" BUILD=
     - compiler: gcc
+      name: "Valgrind no encodmorphism"
       env: # The same as above but without endomorphism.
         - BIGNUM=no  ENDOMORPHISM=no  ASM=x86_64 EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes
         - VALGRIND=yes EXTRAFLAGS="--disable-openssl-tests CPPFLAGS='-DVALGRIND -DITERS=1'" BUILD=
     - compiler: clang
       dist: bionic
+      name: "MSan with encodmorphism"
       env:
         - BIGNUM=no  ENDOMORPHISM=yes  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
         - EXTRAFLAGS="--disable-openssl-tests" MSAN_OPTIONS=exitcode=42
         - CFLAGS='-fsanitize=memory -fno-omit-frame-pointer -fPIE' LDFLAGS='-fsanitize=memory -fPIE -pie'
     - compiler: clang
       dist: bionic
+      name: "ASan with encodmorphism"
       env:
         - BIGNUM=no  ENDOMORPHISM=yes  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
         - EXTRAFLAGS="--disable-openssl-tests" ASAN_OPTIONS=exitcode=42
         - CFLAGS='-fsanitize=address -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address'
     - compiler: clang
       dist: bionic
+      name: "UBSan with encodmorphism"
       env:
         - BIGNUM=no  ENDOMORPHISM=yes  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
         - EXTRAFLAGS="--disable-openssl-tests"
@@ -101,18 +106,21 @@ matrix:
         # The same as above but without endomorphism.
     - compiler: clang
       dist: bionic
+      name: "Msan no encodmorphism"
       env:
         - BIGNUM=no  ENDOMORPHISM=no  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
         - EXTRAFLAGS="--disable-openssl-tests" MSAN_OPTIONS=exitcode=42
         - CFLAGS='-fsanitize=memory -fno-omit-frame-pointer -fPIE' LDFLAGS='-fsanitize=memory -fPIE -pie'
     - compiler: clang
       dist: bionic
+      name: "ASan no encodmorphism"
       env:
         - BIGNUM=no  ENDOMORPHISM=no  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
         - EXTRAFLAGS="--disable-openssl-tests" ASAN_OPTIONS=exitcode=42
         - CFLAGS='-fsanitize=address -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address'
     - compiler: clang
       dist: bionic
+      name: "UBSan no encodmorphism"
       env:
         - BIGNUM=no  ENDOMORPHISM=no  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
         - EXTRAFLAGS="--disable-openssl-tests"
