@@ -11,6 +11,10 @@
 #include "util.h"
 #include "bench.h"
 
+#ifndef ITERS
+#define ITERS 20000
+#endif
+
 typedef struct {
     secp256k1_context *ctx;
     secp256k1_pubkey point;
@@ -34,12 +38,12 @@ static void bench_ecdh_setup(void* arg) {
     CHECK(secp256k1_ec_pubkey_parse(data->ctx, &data->point, point, sizeof(point)) == 1);
 }
 
-static void bench_ecdh(void* arg) {
+static void bench_ecdh(void* arg, int iters) {
     int i;
     unsigned char res[32];
     bench_ecdh_data *data = (bench_ecdh_data*)arg;
 
-    for (i = 0; i < 20000; i++) {
+    for (i = 0; i < iters; i++) {
         CHECK(secp256k1_ecdh(data->ctx, res, &data->point, data->scalar, NULL, NULL) == 1);
     }
 }
@@ -50,7 +54,7 @@ int main(void) {
     /* create a context with no capabilities */
     data.ctx = secp256k1_context_create(SECP256K1_FLAGS_TYPE_CONTEXT);
 
-    run_benchmark("ecdh", bench_ecdh, bench_ecdh_setup, NULL, &data, 10, 20000);
+    run_benchmark("ecdh", bench_ecdh, bench_ecdh_setup, NULL, &data, 10, ITERS);
 
     secp256k1_context_destroy(data.ctx);
     return 0;

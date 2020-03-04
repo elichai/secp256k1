@@ -73,7 +73,7 @@ void print_number(const int64_t x) {
     printf("%s", &buffer[ptr]);
 }
 
-void run_benchmark(char *name, void (*benchmark)(void*), void (*setup)(void*), void (*teardown)(void*), void* data, int count, int iter) {
+void run_benchmark(char *name, void (*benchmark)(void*, int), void (*setup)(void*), void (*teardown)(void*, int), void* data, int count, int iter) {
     int i;
     int64_t min = INT64_MAX;
     int64_t sum = 0;
@@ -84,10 +84,10 @@ void run_benchmark(char *name, void (*benchmark)(void*), void (*setup)(void*), v
             setup(data);
         }
         begin = gettime_i64();
-        benchmark(data);
+        benchmark(data, iter);
         total = gettime_i64() - begin;
         if (teardown != NULL) {
-            teardown(data);
+            teardown(data, iter);
         }
         if (total < min) {
             min = total;

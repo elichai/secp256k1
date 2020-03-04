@@ -18,7 +18,9 @@
 #include "secp256k1.c"
 
 #define POINTS 32768
+#ifndef ITERS
 #define ITERS 10000
+#endif
 
 typedef struct {
     /* Setup once in advance */
@@ -55,13 +57,13 @@ static int bench_callback(secp256k1_scalar* sc, secp256k1_ge* ge, size_t idx, vo
     return 1;
 }
 
-static void bench_ecmult(void* arg) {
+static void bench_ecmult(void* arg, int iters) {
     bench_data* data = (bench_data*)arg;
 
-    size_t count = data->count;
     int includes_g = data->includes_g;
-    size_t iters = 1 + ITERS / count;
-    size_t iter;
+    int iter;
+    int count = data->count;
+    iters = iters / data->count;
 
     for (iter = 0; iter < iters; ++iter) {
         data->ecmult_multi(&data->ctx->error_callback, &data->ctx->ecmult_ctx, data->scratch, &data->output[iter], data->includes_g ? &data->scalars[data->offset1] : NULL, bench_callback, arg, count - includes_g);
@@ -76,10 +78,10 @@ static void bench_ecmult_setup(void* arg) {
     data->offset2 = (data->count * 0x7f6f537b + 0x6a1a8f49) % POINTS;
 }
 
-static void bench_ecmult_teardown(void* arg) {
+static void bench_ecmult_teardown(void* arg, int iters) {
     bench_data* data = (bench_data*)arg;
-    size_t iters = 1 + ITERS / data->count;
-    size_t iter;
+    int iter;
+    iters = iters / data->count;
     /* Verify the results in teardown, to avoid doing comparisons while benchmarking. */
     for (iter = 0; iter < iters; ++iter) {
         secp256k1_gej tmp;
@@ -188,11 +190,14 @@ int main(int argc, char **argv) {
         run_test(&data, i, 1);
     }
 
-    for (p = 0; p <= 11; ++p) {
-        for (i = 9; i <= 16; ++i) {
-            run_test(&data, i << p, 1);
+    if (ITERS > 1) {
+        for (p = 0; p <= 11; ++p) {
+            for (i = 9; i <= 16; ++i) {
+                run_test(&data, i << p, 1);
+            }
         }
     }
+
     if (data.scratch != NULL) {
         secp256k1_scratch_space_destroy(data.ctx, data.scratch);
     }
