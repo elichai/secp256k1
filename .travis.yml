@@ -79,6 +79,47 @@ matrix:
       env: # The same as above but without endomorphism.
         - BIGNUM=no  ENDOMORPHISM=no  ASM=x86_64 EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes
         - VALGRIND=yes EXTRAFLAGS="--disable-openssl-tests CPPFLAGS='-DVALGRIND -DITERS=1'" BUILD=
+    - compiler: clang
+      dist: bionic
+      env:
+        - BIGNUM=no  ENDOMORPHISM=yes  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
+        - EXTRAFLAGS="--disable-openssl-tests" MSAN_OPTIONS=exitcode=42
+        - CFLAGS='-fsanitize=memory -fno-omit-frame-pointer -fPIE' LDFLAGS='-fsanitize=memory -fPIE -pie'
+    - compiler: clang
+      dist: bionic
+      env:
+        - BIGNUM=no  ENDOMORPHISM=yes  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
+        - EXTRAFLAGS="--disable-openssl-tests" ASAN_OPTIONS=exitcode=42
+        - CFLAGS='-fsanitize=address -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address'
+    - compiler: clang
+      dist: bionic
+      env:
+        - BIGNUM=no  ENDOMORPHISM=yes  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
+        - EXTRAFLAGS="--disable-openssl-tests"
+        - CFLAGS='-fsanitize=undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=undefined'
+
+        # The same as above but without endomorphism.
+    - compiler: clang
+      dist: bionic
+      env:
+        - BIGNUM=no  ENDOMORPHISM=no  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
+        - EXTRAFLAGS="--disable-openssl-tests" MSAN_OPTIONS=exitcode=42
+        - CFLAGS='-fsanitize=memory -fno-omit-frame-pointer -fPIE' LDFLAGS='-fsanitize=memory -fPIE -pie'
+    - compiler: clang
+      dist: bionic
+      env:
+        - BIGNUM=no  ENDOMORPHISM=no  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
+        - EXTRAFLAGS="--disable-openssl-tests" ASAN_OPTIONS=exitcode=42
+        - CFLAGS='-fsanitize=address -fno-omit-frame-pointer' LDFLAGS='-fsanitize=address'
+    - compiler: clang
+      dist: bionic
+      env:
+        - BIGNUM=no  ENDOMORPHISM=no  ASM=no EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes CTIMETEST=
+        - EXTRAFLAGS="--disable-openssl-tests"
+        - CFLAGS='-fsanitize=undefined -fno-omit-frame-pointer' LDFLAGS='-fsanitize=undefined'
+
+
+
 
 before_script: ./autogen.sh
 
