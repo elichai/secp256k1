@@ -45,10 +45,13 @@ static void secp256k1_sha256_initialize(secp256k1_sha256 *hash) {
     hash->bytes = 0;
 }
 
+#ifndef USE_EXTERNAL_SHA2_TRANSFORM
 /** Perform one SHA-256 transformation, processing 16 big endian 32-bit words. */
-static void secp256k1_sha256_transform(uint32_t* s, const uint32_t* chunk) {
+static void secp256k1_sha256_transform(uint32_t *s, unsigned char *data) {
+    uint32_t chunk[16];
     uint32_t a = s[0], b = s[1], c = s[2], d = s[3], e = s[4], f = s[5], g = s[6], h = s[7];
     uint32_t w0, w1, w2, w3, w4, w5, w6, w7, w8, w9, w10, w11, w12, w13, w14, w15;
+    memcpy(&chunk, data, sizeof(chunk));
 
     Round(a, b, c, d, e, f, g, h, 0x428a2f98, w0 = BE32(chunk[0]));
     Round(h, a, b, c, d, e, f, g, 0x71374491, w1 = BE32(chunk[1]));
@@ -127,6 +130,10 @@ static void secp256k1_sha256_transform(uint32_t* s, const uint32_t* chunk) {
     s[6] += g;
     s[7] += h;
 }
+#else
+/** Update the state (array of 8 uint32_t) pointed to by state with 64 bytes of input pointed to by data. */
+void secp256k1_sha256_transform(uint32_t *state, unsigned char *data);
+#endif /* USE_EXTERNAL_SHA2_TRANSFORM */
 
 static void secp256k1_sha256_write(secp256k1_sha256 *hash, const unsigned char *data, size_t len) {
     size_t bufsize = hash->bytes & 0x3F;
@@ -135,7 +142,7 @@ static void secp256k1_sha256_write(secp256k1_sha256 *hash, const unsigned char *
     while (len >= 64 - bufsize) {
         /* Fill the buffer, and process it. */
         size_t chunk_len = 64 - bufsize;
-        memcpy(((unsigned char*)hash->buf) + bufsize, data, chunk_len);
+        memcpy(hash->buf + bufsize, data, chunk_len);
         data += chunk_len;
         len -= chunk_len;
         secp256k1_sha256_transform(hash->s, hash->buf);
@@ -143,7 +150,7 @@ static void secp256k1_sha256_write(secp256k1_sha256 *hash, const unsigned char *
     }
     if (len) {
         /* Fill the buffer with what remains. */
-        memcpy(((unsigned char*)hash->buf) + bufsize, data, len);
+        memcpy(hash->buf + bufsize, data, len);
     }
 }
 

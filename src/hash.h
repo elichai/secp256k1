@@ -12,7 +12,7 @@
 
 typedef struct {
     uint32_t s[8];
-    uint32_t buf[16]; /* In big endian */
+    unsigned char buf[64]; /* In big endian */
     size_t bytes;
 } secp256k1_sha256;
 

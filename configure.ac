@@ -141,6 +141,11 @@ AC_ARG_ENABLE(external_default_callbacks,
     [use_external_default_callbacks=$enableval],
     [use_external_default_callbacks=no])
 
+AC_ARG_ENABLE(external_sha2_transform,
+    AS_HELP_STRING([--enable-external-sha2-transform],[enable sha256 transform function [default=no]]),
+    [use_external_sha2_transform=$enableval],
+    [use_external_sha2_transform=no])
+
 AC_ARG_WITH([field], [AS_HELP_STRING([--with-field=64bit|32bit|auto],
 [finite field implementation to use [default=auto]])],[req_field=$withval], [req_field=auto])
 
@@ -503,6 +508,10 @@ if test x"$use_external_default_callbacks" = x"yes"; then
   AC_DEFINE(USE_EXTERNAL_DEFAULT_CALLBACKS, 1, [Define this symbol if an external implementation of the default callbacks is used])
 fi
 
+if test x"$use_external_sha2_transform" = x"yes"; then
+  AC_DEFINE(USE_EXTERNAL_SHA2_TRANSFORM, 1, [Define this symbol if an external implementation of the sha256 transform is used])
+fi
+
 if test x"$enable_experimental" = x"yes"; then
   AC_MSG_NOTICE([******])
   AC_MSG_NOTICE([WARNING: experimental build])
@@ -546,6 +555,7 @@ echo "Build Options:"
 echo "  with endomorphism       = $use_endomorphism"
 echo "  with ecmult precomp     = $set_precomp"
 echo "  with external callbacks = $use_external_default_callbacks"
+echo "  with external sha2      = $use_external_sha2_transform"
 echo "  with benchmarks         = $use_benchmark"
 echo "  with coverage           = $enable_coverage"
 echo "  module ecdh             = $enable_module_ecdh"
