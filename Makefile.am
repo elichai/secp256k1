@@ -48,6 +48,7 @@ noinst_HEADERS += contrib/lax_der_parsing.h
 noinst_HEADERS += contrib/lax_der_parsing.c
 noinst_HEADERS += contrib/lax_der_privatekey_parsing.h
 noinst_HEADERS += contrib/lax_der_privatekey_parsing.c
+noinst_HEADERS += examples/random.h
 
 if USE_EXTERNAL_ASM
 COMMON_LIB = libsecp256k1_common.la
@@ -119,6 +120,23 @@ endif
 exhaustive_tests_LDADD = $(SECP_LIBS) $(COMMON_LIB)
 exhaustive_tests_LDFLAGS = -static
 TESTS += exhaustive_tests
+endif
+
+if USE_EXAMPLES
+noinst_PROGRAMS += keygen_example
+keygen_example_SOURCES = examples/keygen.c
+keygen_example_CPPFLAGS = -I$(top_srcdir)/include $(SECP_INCLUDES)
+keygen_example_LDADD = libsecp256k1.la $(SECP_LIBS)
+keygen_example_LDFLAGS = -static
+TESTS += keygen_example
+if ENABLE_MODULE_ECDH
+noinst_PROGRAMS += ecdh_example
+ecdh_example_SOURCES = examples/ecdh.c
+ecdh_example_CPPFLAGS = -I$(top_srcdir)/include $(SECP_INCLUDES)
+ecdh_example_LDADD = libsecp256k1.la $(SECP_LIBS)
+ecdh_example_LDFLAGS = -static
+TESTS += ecdh_example
+endif
 endif
 
 if USE_ECMULT_STATIC_PRECOMPUTATION
