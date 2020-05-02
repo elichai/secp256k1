@@ -1,11 +1,28 @@
 language: c
-os: linux
+os:
+  - linux
+  - osx
+cache:
+  directories:
+    - $HOME/Library/Caches/Homebrew
+    - /usr/local/Homebrew
+before_cache:
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then brew cleanup; fi
+
+# Valgrind currently supports upto macOS 10.13, the latest xcode of that version is 10.1
+osx_image: xcode10.1
 addons:
   apt:
     packages:
       - libgmp-dev
       - valgrind
       - libtool-bin
+  homebrew:
+    update: true
+    packages:
+      - gmp
+      - valgrind
+      - gcc@9
 compiler:
   - clang
   - gcc
@@ -30,10 +47,13 @@ env:
     - CFLAGS=-O0 CTIMETEST=
     - ECMULTGENPRECISION=2
     - ECMULTGENPRECISION=8
+    - VALGRIND=yes ENDOMORPHISM=yes BIGNUM=no ASM=x86_64 EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes EXTRAFLAGS="--disable-openssl-tests" CPPFLAGS=-DVALGRIND BUILD=
+    - VALGRIND=yes                  BIGNUM=no ASM=x86_64 EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes EXTRAFLAGS="--disable-openssl-tests" CPPFLAGS=-DVALGRIND BUILD=
 matrix:
   fast_finish: true
   include:
     - compiler: clang
+      os: linux
       env: HOST=i686-linux-gnu ENDOMORPHISM=yes
       addons:
         apt:
@@ -45,6 +65,7 @@ matrix:
             - libc6-dbg:i386
     - compiler: clang
       env: HOST=i686-linux-gnu
+      os: linux
       addons:
         apt:
           packages:
@@ -54,6 +75,7 @@ matrix:
             - libc6-dbg:i386
     - compiler: gcc
       env: HOST=i686-linux-gnu ENDOMORPHISM=yes
+      os: linux
       addons:
         apt:
           packages:
@@ -62,6 +84,7 @@ matrix:
             - libtool-bin
             - libc6-dbg:i386
     - compiler: gcc
+      os: linux
       env: HOST=i686-linux-gnu
       addons:
         apt:
@@ -71,14 +94,6 @@ matrix:
             - valgrind
             - libtool-bin
             - libc6-dbg:i386
-    - compiler: gcc
-      env:
-        - BIGNUM=no  ENDOMORPHISM=yes  ASM=x86_64 EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes
-        - VALGRIND=yes EXTRAFLAGS="--disable-openssl-tests" CPPFLAGS=-DVALGRIND BUILD=
-    - compiler: gcc
-      env: # The same as above but without endomorphism.
-        - BIGNUM=no  ASM=x86_64 EXPERIMENTAL=yes ECDH=yes  RECOVERY=yes
-        - VALGRIND=yes EXTRAFLAGS="--disable-openssl-tests" CPPFLAGS=-DVALGRIND BUILD=
 
 before_script: ./autogen.sh
 
@@ -90,3 +105,5 @@ after_script:
     - cat ./exhaustive_tests.log
     - cat ./valgrind_ctime_test.log
     - cat ./bench.log
+    - $CC --version
+    - valgrind --version
