@@ -1,13 +1,7 @@
 language: c
 os:
-  - linux
+  # - linux
   - osx
-cache:
-  directories:
-    - $HOME/Library/Caches/Homebrew
-    - /usr/local/Homebrew
-before_cache:
-  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then brew cleanup; fi
 
 dist: bionic
 # Valgrind currently supports upto macOS 10.13, the latest xcode of that version is 10.1
@@ -19,7 +13,6 @@ addons:
       - valgrind
       - libtool-bin
   homebrew:
-    update: true
     packages:
       - gmp
       - valgrind
