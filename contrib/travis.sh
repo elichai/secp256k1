@@ -42,17 +42,17 @@ then
     else
         EXEC=
     fi
-    $EXEC ./bench_ecmult >> bench.log 2>&1
-    $EXEC ./bench_internal >> bench.log 2>&1
-    $EXEC ./bench_sign >> bench.log 2>&1
-    $EXEC ./bench_verify >> bench.log 2>&1
+    SECP256K1_BENCH_ITERS="$ITERS" $EXEC ./bench_ecmult >> bench.log 2>&1
+    SECP256K1_BENCH_ITERS="$ITERS" $EXEC ./bench_internal >> bench.log 2>&1
+    SECP256K1_BENCH_ITERS="$ITERS" $EXEC ./bench_sign >> bench.log 2>&1
+    SECP256K1_BENCH_ITERS="$ITERS" $EXEC ./bench_verify >> bench.log 2>&1
     if [ "$RECOVERY" = "yes" ]
     then
-        $EXEC ./bench_recover >> bench.log 2>&1
+        SECP256K1_BENCH_ITERS="$ITERS" $EXEC ./bench_recover >> bench.log 2>&1
     fi
     if [ "$ECDH" = "yes" ]
     then
-        $EXEC ./bench_ecdh >> bench.log 2>&1
+        SECP256K1_BENCH_ITERS="$ITERS" $EXEC ./bench_ecdh >> bench.log 2>&1
     fi
 fi
 if [ -n "$CTIMETEST" ]
